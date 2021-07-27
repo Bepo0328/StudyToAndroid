@@ -10,7 +10,7 @@ import java.util.*
 
 class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
 
-    private val todoItems: ArrayList<TodoModel> = arrayListOf()
+    private var todoItems: List<TodoModel> = listOf()
 
     inner class TodoViewHolder(
         private val binding: ViewholderTodoListItemBinding
@@ -40,7 +40,8 @@ class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     override fun getItemCount(): Int =
         todoItems.size
 
-    fun addItem(todoModel: TodoModel) {
-        todoItems.add(todoModel)
+    fun setTodoItems(todoItems: List<TodoModel>) {
+        this.todoItems = todoItems
+        notifyDataSetChanged()
     }
 }
