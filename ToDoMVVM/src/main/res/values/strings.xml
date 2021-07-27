@@ -2,4 +2,6 @@
     <string name="app_name">StudyToAndroid</string>
     <string name="empty_history_text">태스크가 없습니다.</string>
     <string name="add_task_button">addtaskbutton</string>
+    <string name="title">Title</string>
+    <string name="description">description</string>
 </resources>
