@@ -2,6 +2,8 @@ package kr.co.bepo.studytoandroid.model.repository
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kr.co.bepo.studytoandroid.model.TodoModel
 import kr.co.bepo.studytoandroid.model.db.TodoDatabase
 import kr.co.bepo.studytoandroid.model.db.dao.TodoDao
@@ -21,8 +23,13 @@ class TodoRepository(application: Application) {
         todoItems
 
     fun insertTodo(todoModel: TodoModel) {
-        Thread(Runnable {
-            todoDao.insertTodo(todoModel)
-        }).start()
+        Observable.just(todoModel)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                todoDao.insertTodo(todoModel)
+
+            }, {
+                it.printStackTrace()
+            })
     }
 }

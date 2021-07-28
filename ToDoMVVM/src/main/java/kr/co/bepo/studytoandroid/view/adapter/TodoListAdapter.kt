@@ -2,7 +2,11 @@ package kr.co.bepo.studytoandroid.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kr.co.bepo.studytoandroid.databinding.ViewholderTodoListItemBinding
 import kr.co.bepo.studytoandroid.model.TodoModel
 import java.text.SimpleDateFormat
@@ -41,7 +45,15 @@ class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
         todoItems.size
 
     fun setTodoItems(todoItems: List<TodoModel>) {
-        this.todoItems = todoItems
-        notifyDataSetChanged()
+        Observable.just(todoItems)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
+            .map { DiffUtil.calculateDiff(TodoListDiffCallback(this.todoItems, todoItems)) }
+            .subscribe({
+                this.todoItems = todoItems
+                it.dispatchUpdatesTo(this)
+            }, {
+                it.printStackTrace()
+            })
     }
 }
