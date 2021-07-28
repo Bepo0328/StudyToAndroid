@@ -3,7 +3,6 @@ package kr.co.bepo.studytoandroid.view
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import kr.co.bepo.studytoandroid.databinding.ActivityTodoListBinding
 import kr.co.bepo.studytoandroid.databinding.DialogAddTodoBinding
@@ -19,7 +18,19 @@ class TodoListActivity : AppCompatActivity() {
             application
         ).create(TodoViewModel::class.java)
     }
-    private val todoAdapter: TodoListAdapter by lazy { TodoListAdapter() }
+    private val todoAdapter: TodoListAdapter by lazy {
+        TodoListAdapter().apply {
+            listener = object : TodoListAdapter.OnTodoItemClickListener {
+                override fun onTodoItemClick(position: Int) {
+                    openModifyTodoDialog(getItem(position))
+                }
+
+                override fun onTodoItemLongClick(position: Int) {
+                    openDeleteTodoDialog(getItem(position))
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,5 +71,39 @@ class TodoListActivity : AppCompatActivity() {
         todoViewModel.getTodoList().observe(this, {
             todoAdapter.setTodoItems(it)
         })
+    }
+
+    private fun openModifyTodoDialog(todoModel: TodoModel) {
+        val dialogAddTodoBinding = DialogAddTodoBinding.inflate(layoutInflater)
+        dialogAddTodoBinding.titleEditText.setText(todoModel.title)
+        dialogAddTodoBinding.descriptionEditText.setText(todoModel.description)
+
+        AlertDialog.Builder(this@TodoListActivity)
+            .setTitle("수정하기")
+            .setView(dialogAddTodoBinding.root)
+            .setPositiveButton("확인") { _, _ ->
+                val title = dialogAddTodoBinding.titleEditText.text.toString()
+                val description = dialogAddTodoBinding.descriptionEditText.text.toString()
+
+                todoModel.title = title
+                todoModel.description = description
+
+                todoViewModel.updateTodo(todoModel)
+            }
+            .setNegativeButton("취소", null)
+            .create()
+            .show()
+    }
+
+    private fun openDeleteTodoDialog(todoModel: TodoModel) {
+        AlertDialog.Builder(this@TodoListActivity)
+            .setTitle("삭제하기")
+            .setMessage("확인을 누르면 삭제됩니다.")
+            .setPositiveButton("확인") { _, _ ->
+                todoViewModel.deleteTodo(todoModel)
+            }
+            .setNegativeButton("취소", null)
+            .create()
+            .show()
     }
 }

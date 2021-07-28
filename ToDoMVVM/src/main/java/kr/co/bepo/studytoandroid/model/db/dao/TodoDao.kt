@@ -1,9 +1,7 @@
 package kr.co.bepo.studytoandroid.model.db.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import kr.co.bepo.studytoandroid.model.TodoModel
 
 @Dao
@@ -14,4 +12,10 @@ interface TodoDao {
 
     @Insert
     fun insertTodo(todoModel: TodoModel)
+
+    @Update
+    fun updateTodo(todoModel: TodoModel)
+
+    @Delete
+    fun deleteTodo(todoModel: TodoModel)
 }

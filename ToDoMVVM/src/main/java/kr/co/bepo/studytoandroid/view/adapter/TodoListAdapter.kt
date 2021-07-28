@@ -16,9 +16,28 @@ class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
 
     private var todoItems: List<TodoModel> = listOf()
 
+    interface OnTodoItemClickListener {
+        fun onTodoItemClick(position: Int)
+        fun onTodoItemLongClick(position: Int)
+    }
+
+    var listener: OnTodoItemClickListener? = null
+
     inner class TodoViewHolder(
-        private val binding: ViewholderTodoListItemBinding
+        private val binding: ViewholderTodoListItemBinding,
+        private val listener: OnTodoItemClickListener?
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                listener?.onTodoItemClick(adapterPosition)
+            }
+            binding.root.setOnLongClickListener {
+                listener?.onTodoItemLongClick(adapterPosition)
+                return@setOnLongClickListener true
+            }
+        }
+
         fun bind(todoModel: TodoModel) = with(binding) {
             titleTextView.text = todoModel.title
             descriptionTextView.text = todoModel.description
@@ -33,7 +52,7 @@ class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ), listener
         )
 
 
@@ -56,4 +75,7 @@ class TodoListAdapter : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
                 it.printStackTrace()
             })
     }
+
+    fun getItem(position: Int): TodoModel =
+        todoItems[position]
 }
