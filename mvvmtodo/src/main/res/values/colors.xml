@@ -20,4 +20,6 @@
     <color name="gray">#808080</color>
     <color name="gray_168">#a8a8a8</color>
     <color name="gray_204">#cccccc</color>
+    <color name="holo_orange_light">#ffffbb33</color>
+
 </resources>
