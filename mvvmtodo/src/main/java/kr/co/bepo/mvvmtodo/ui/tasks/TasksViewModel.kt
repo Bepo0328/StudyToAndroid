@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kr.co.bepo.mvvmtodo.data.PreferencesManager
 import kr.co.bepo.mvvmtodo.data.SortOrder
+import kr.co.bepo.mvvmtodo.data.Task
 import kr.co.bepo.mvvmtodo.data.TaskDao
 import javax.inject.Inject
 
@@ -38,6 +39,13 @@ class TasksViewModel @Inject constructor(
 
     fun onHideCompletedClick(hideCompleted: Boolean) = viewModelScope.launch {
         preferencesManager.updateHideCompleted(hideCompleted)
+    }
+
+    fun onTaskSelected(task: Task) = viewModelScope.launch {
+    }
+
+    fun onTaskCheckedChanged(task: Task, isChecked: Boolean) = viewModelScope.launch {
+        taskDao.update(task.copy(completed = isChecked))
     }
 
     val tasks = tasksFlow.asLiveData()
